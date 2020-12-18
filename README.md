@@ -2,7 +2,7 @@
 
 ## 安装
 
-`go get -v github.com/jiazhoulvke/simple_query_builder@latest`
+`go get -v github.com/jiazhoulvke/simple_query_builer`
 
 ## 使用
 
