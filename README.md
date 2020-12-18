@@ -23,7 +23,7 @@ func main() {
 		),
 		sqb.Or(
 		    sqb.NotEqual("field3", 1.23),
-			sqb.Like("field4", "%foo%"),
+		    sqb.Like("field4", "%foo%"),
 		),
 	).
 	Limit(10).
