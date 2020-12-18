@@ -2,7 +2,7 @@
 
 ## 安装
 
-`go get -v github.com/jiazhoulvke/simple_query_builder@latest`
+`go get -v github.com/jiazhoulvke/simple_query_builder`
 
 ## 使用
 
@@ -23,7 +23,7 @@ func main() {
 		),
 		sqb.Or(
 		    sqb.NotEqual("field3", 1.23),
-			sqb.Like("field4", "%foo%"),
+		    sqb.Like("field4", "%foo%"),
 		),
 	).
 	Limit(10).
