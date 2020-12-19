@@ -16,6 +16,10 @@ func TestModel(t *testing.T) {
 					"field3": 'a',
 					"field4": "foobar",
 				}).
+				SetRaw("field5", "NOW()").
+				SetRawData(map[string]string{
+					"field6": "NOW()",
+				}).
 				Build()
 			So(insertSQL, ShouldNotEqual, "")
 			So(len(args), ShouldEqual, 4)
@@ -55,6 +59,11 @@ func TestModel(t *testing.T) {
 				Set("field4", "4").
 				SetData(map[string]interface{}{
 					"field5": "foobar5",
+				}).
+				SetRaw("created_at", "NOW()").
+				SetRawData(map[string]string{
+					"field6":     "field6+1",
+					"updated_at": "NOW()",
 				}).
 				Where(
 					Equal("`status`", "normal"),

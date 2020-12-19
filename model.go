@@ -12,6 +12,7 @@ type Model struct {
 	tableName  string
 	joins      []string
 	changes    map[string]interface{}
+	rawChanges map[string]string
 	conditions []Conditioner
 	groupBys   []string
 	having     string
@@ -44,6 +45,7 @@ func NewModel(table string, method string) *Model {
 		tableName:  table,
 		method:     method,
 		changes:    make(map[string]interface{}),
+		rawChanges: make(map[string]string),
 		joins:      make([]string, 0),
 		groupBys:   make([]string, 0),
 		conditions: make([]Conditioner, 0),
@@ -89,9 +91,21 @@ func (m *Model) Set(key string, value interface{}) *Model {
 	return m
 }
 
+func (m *Model) SetRaw(key string, value string) *Model {
+	m.rawChanges[key] = value
+	return m
+}
+
 func (m *Model) SetData(data map[string]interface{}) *Model {
 	for k, v := range data {
 		m.changes[k] = v
+	}
+	return m
+}
+
+func (m *Model) SetRawData(data map[string]string) *Model {
+	for k, v := range data {
+		m.rawChanges[k] = v
 	}
 	return m
 }
@@ -152,15 +166,27 @@ func (m *Model) buildInsert() (string, []interface{}) {
 	bs2 := bytes.NewBufferString(" (")
 	args := make([]interface{}, 0)
 	n := 1
-	fieldsNum := len(m.changes)
+	fieldsNum := len(m.changes) + len(m.rawChanges)
 	for k, v := range m.changes {
 		args = append(args, v)
-		if n >= fieldsNum {
-			bs.WriteString("`" + k + "`")
-			bs2.WriteString("?")
-		} else {
-			bs.WriteString("`" + k + "`,")
-			bs2.WriteString("?,")
+		bs.WriteString("`" + k + "`")
+		if n < fieldsNum {
+			bs.WriteRune(',')
+		}
+		bs2.WriteRune('?')
+		if n < fieldsNum {
+			bs2.WriteRune(',')
+		}
+		n++
+	}
+	for k, v := range m.rawChanges {
+		bs.WriteString("`" + k + "`")
+		if n < fieldsNum {
+			bs.WriteRune(',')
+		}
+		bs2.WriteString(v)
+		if n < fieldsNum {
+			bs2.WriteRune(',')
 		}
 		n++
 	}
@@ -187,14 +213,23 @@ func (m *Model) buildUpdate() (string, []interface{}) {
 	bs := bytes.NewBufferString("UPDATE `")
 	bs.WriteString(m.tableName)
 	bs.WriteString("` SET ")
-	n := 1
 	args := make([]interface{}, 0)
+	n := 1
+	fieldsNum := len(m.changes) + len(m.rawChanges)
 	for k, v := range m.changes {
 		args = append(args, v)
-		if n >= len(m.changes) {
+		if n == fieldsNum {
 			bs.WriteString(k + "=?")
 		} else {
 			bs.WriteString(k + "=?,")
+		}
+		n++
+	}
+	for k, v := range m.rawChanges {
+		if n == fieldsNum {
+			bs.WriteString(k + "=" + v)
+		} else {
+			bs.WriteString(k + "=" + v + ",")
 		}
 		n++
 	}
