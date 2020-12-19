@@ -163,7 +163,7 @@ func (m *Model) buildInsert() (string, []interface{}) {
 	bs := bytes.NewBufferString("INSERT INTO `")
 	bs.WriteString(m.tableName)
 	bs.WriteString("` (")
-	bs2 := bytes.NewBufferString(" (")
+	bs2 := bytes.NewBufferString(" VALUES (")
 	args := make([]interface{}, 0)
 	n := 1
 	fieldsNum := len(m.changes) + len(m.rawChanges)
