@@ -2,6 +2,7 @@ package sqb
 
 import (
 	"bytes"
+	"reflect"
 )
 
 type Conditioner interface {
@@ -104,6 +105,23 @@ func inOrNotIn(method string, expr string, args ...interface{}) BaseCondition {
 		Str:  bs.String(),
 		args: args,
 	}
+}
+
+//Interfaces 将任意类型的切片转为[]interface{}
+func Interfaces(slice interface{}) []interface{} {
+	s := make([]interface{}, 0, 0)
+	v := reflect.ValueOf(slice)
+	if v.Kind() == reflect.Interface {
+		v = v.Elem()
+	}
+	if v.Kind() != reflect.Slice && v.Kind() != reflect.Array {
+		panic("value is not slice")
+	}
+
+	for i, l := 0, v.Len(); i < l; i++ {
+		s = append(s, v.Index(i).Interface())
+	}
+	return s
 }
 
 func In(expr string, args ...interface{}) BaseCondition {

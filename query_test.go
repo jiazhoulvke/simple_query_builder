@@ -6,8 +6,8 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 )
 
-func TestModel(t *testing.T) {
-	Convey("TestModel", t, func() {
+func TestQuery(t *testing.T) {
+	Convey("TestQuery", t, func() {
 		Convey("TestInsert", func() {
 			insertSQL, args := Insert("table1").
 				Set("field1", 1).
@@ -42,7 +42,7 @@ func TestModel(t *testing.T) {
 						IsNotNull("n2"),
 						Like("l1", "%area%"),
 						NotLike("l2", "area%"),
-						In("id", 1, 2, 3),
+						In("id", Interfaces([]int{1, 2, 3})...),
 						NotIn("id", 4, 5),
 					),
 				).
@@ -75,10 +75,11 @@ func TestModel(t *testing.T) {
 			t.Log("UPDATE:", updateSQL, args)
 		})
 		Convey("TestSelect", func() {
-			selectSQL, args := Select("table1", "*").
+			selectSQL, args := Select("table1").
 				Distinct().
-				LeftJoin("table2 ON table2.tid=table1.id").
-				RightJoin("table3 ON table3.tid=table1.id").
+				Fields("foo,bar").
+				LeftJoin("table2", "table2.tid=table1.id").
+				RightJoin("table3", "table3.tid=table1.id").
 				Join("LEFT JOIN table4 ON table4.cid=table1.cid").
 				Where(
 					Equal("field1", "abc"),
