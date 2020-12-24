@@ -1,5 +1,9 @@
 package sqb
 
+type Builder interface {
+	Build() (string, []interface{})
+}
+
 type Query struct {
 	tableName string
 }
