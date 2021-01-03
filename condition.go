@@ -111,7 +111,7 @@ func inOrNotIn(method string, expr string, args ...interface{}) BaseCondition {
 func Interfaces(slice interface{}) []interface{} {
 	s := make([]interface{}, 0, 0)
 	v := reflect.ValueOf(slice)
-	if v.Kind() == reflect.Interface {
+	if v.Kind() == reflect.Ptr {
 		v = v.Elem()
 	}
 	if v.Kind() != reflect.Slice && v.Kind() != reflect.Array {
