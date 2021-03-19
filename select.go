@@ -112,7 +112,7 @@ func (q *SelectQuery) Build() (string, []interface{}) {
 	}
 	//Having
 	if q.having != "" {
-		bs.WriteRune(' ')
+		bs.WriteString(" HAVING ")
 		bs.WriteString(q.having)
 	}
 	//OrderBy
