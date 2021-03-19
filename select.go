@@ -120,7 +120,7 @@ func (q *SelectQuery) Build() (string, []interface{}) {
 		bs.WriteString(" ORDER BY ")
 		for i := 0; i < len(q.orderBys); i++ {
 			bs.WriteString(q.orderBys[i])
-			if i < len(q.groupBys)-1 {
+			if i < len(q.orderBys)-1 {
 				bs.WriteRune(',')
 			}
 		}
